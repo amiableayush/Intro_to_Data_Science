@@ -1,0 +1,54 @@
+import sys
+import json
+
+def main():
+    sent_dict={}
+    with open(sys.argv[1],"r") as sent_file:
+	for line in sent_file:
+	    term, score= line.split("\t")
+	    sent_dict[term]= score
+
+    tweet_list=[]
+    tweet_text=[]
+    new_words=[]
+    tweet_scores={}
+    with open(sys.argv[2]) as tweet_file:
+	for line in tweet_file:
+	    tweet_list.append(json.loads(line))
+	for index in range(len(tweet_list)):
+	    if "text" in tweet_list[index].keys():
+		tweet_word=tweet_list[index]["text"].split()
+		for i in range(len(tweet_word)):
+		    tweet_word[i]=tweet_word[i].encode("utf-8")
+		tweet_text.append(tweet_word)
+		sent_score=0
+		for word in tweet_word:
+		    if word in sent_dict.keys():
+		        sent_score=sent_score + int(sent_dict[word])
+	    	    else:
+		        new_words.append(word)
+		        sent_score=sent_score
+		tweet_scores[str(tweet_word)]=sent_score
+	    else:
+		continue
+	pos=neg=total=0
+	
+	for n in new_word:
+	    for t in tweet_text:
+		if n in t:
+		    if tweet_scores[str(t)]>0:
+			pos=pos+1
+		    elif tweet_scores[str(t)]<0:
+			neg=neg+1
+		    total=total+1
+		print n,"",(pos-neg)/total
+                
+
+		    
+
+		    
+		    
+if __name__ == '__main__':
+    main()
+   
+
